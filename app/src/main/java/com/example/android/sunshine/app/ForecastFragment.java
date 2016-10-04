@@ -33,6 +33,7 @@ public class ForecastFragment extends Fragment {
 
     //URL of openwheathermap request of 7 days forecast for zipcode 08930:
     public final String URL_DEFAULT = "http://api.openweathermap.org/data/2.5/forecast/daily?q=08930,es&mode=json&units=metric&cnt=7&APPID=68fefbcbfcffb570fc8cbaec9574ff5d&lang=es";
+    private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -75,12 +76,12 @@ public class ForecastFragment extends Fragment {
         ArrayList<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
 
         //Use the adapter to put the data properly
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+        mForecastAdapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.list_item_forecast,R.id.list_item_forecast_textview,weekForecast);
 
-        //Set the adapter on listview
+        // Set the adapter on listview
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(adapter);
+        listView.setAdapter(mForecastAdapter);
 
         return rootView;
     }
@@ -176,9 +177,19 @@ public class ForecastFragment extends Fragment {
             return forecastJsonArrayStr;
         }
 
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mForecastAdapter.clear();
+                for(String dayForecastStr : result) {
+                    mForecastAdapter.add(dayForecastStr);
+                }
+            }
+        }
+
         /* The date/time conversion code is going to be moved outside the asynctask later,
- * so for convenience we're breaking it out into its own method now.
- */
+         * so for convenience we're breaking it out into its own method now.
+         */
         private String getReadableDateString(long time){
             // Because the API returns a unix timestamp (measured in seconds),
             // it must be converted to milliseconds in order to be converted to valid date.
@@ -272,7 +283,6 @@ public class ForecastFragment extends Fragment {
                 Log.v(LOG_TAG, "Forecast entry: " + s);
             }
             return resultStrs;
-
         }
 
     }
