@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Sunshine</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name" translatable="false">Sunshine</string>
+
+    <!--Actions-->
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
-    <string name="title_activity_detail">DetailActivity</string>
 
+    <!--Titles-->
+    <string name="title_activity_detail">Details</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!--Settings-->
+    <string name="pref_location_label">Location</string>
+    <string name="pref_location_key" translatable="false">location</string>
+    <string name="pref_location_default" translatable="false">08930,es</string>
 </resources>
