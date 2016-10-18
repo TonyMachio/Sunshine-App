@@ -63,7 +63,6 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             updateWeather();
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -89,7 +88,6 @@ public class ForecastFragment extends Fragment {
                 String text = listView.getItemAtPosition(myItemInt).toString();
                 Intent detailIntent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, text);
                 startActivity(detailIntent);
-//                Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -100,7 +98,8 @@ public class ForecastFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = sharedPreferences.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
-        new FetchWeatherTask().execute(location);
+        String units = sharedPreferences.getString(getString(R.string.pref_units_key),"C");
+        new FetchWeatherTask().execute(location, units);
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
@@ -171,7 +170,8 @@ public class ForecastFragment extends Fragment {
                 }
                 String forecastJsonStr = buffer.toString();
                 Log.v(LOG_TAG, "Result from forecast HTTP Request: " + forecastJsonStr);
-                forecastJsonArrayStr = getWeatherDataFromJson(forecastJsonStr, days);
+                String temperatureUnits = params[1];
+                forecastJsonArrayStr = getWeatherDataFromJson(forecastJsonStr, days, temperatureUnits);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
@@ -218,7 +218,14 @@ public class ForecastFragment extends Fragment {
         /**
          * Prepare the weather high/lows for presentation.
          */
-        private String formatHighLows(double high, double low) {
+        private String formatHighLows(double high, double low, String temperatureUnits) {
+
+            if (getString(R.string.pref_units_imperial).equals(temperatureUnits)){
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            }else if(getString(R.string.pref_units_metric).equals(temperatureUnits)){
+                Log.d(LOG_TAG, "Unit type not found: " + temperatureUnits);
+            }
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
@@ -234,7 +241,7 @@ public class ForecastFragment extends Fragment {
          * Fortunately parsing is easy:  constructor takes the JSON string and converts it
          * into an Object hierarchy for us.
          */
-        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays, String temperatureUnits)
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
@@ -293,7 +300,8 @@ public class ForecastFragment extends Fragment {
                 double high = temperatureObject.getDouble(OWM_MAX);
                 double low = temperatureObject.getDouble(OWM_MIN);
 
-                highAndLow = formatHighLows(high, low);
+
+                highAndLow = formatHighLows(high, low, temperatureUnits);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
