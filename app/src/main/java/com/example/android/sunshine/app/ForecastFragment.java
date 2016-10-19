@@ -81,7 +81,7 @@ public class ForecastFragment extends Fragment {
         final ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
 
-        //Mostrar toast con el texto del item seleccionado
+        //Lanzar la actividad del detalle
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int myItemInt, long l) {
@@ -105,7 +105,6 @@ public class ForecastFragment extends Fragment {
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-        public final String APPID_VALUE = "68fefbcbfcffb570fc8cbaec9574ff5d";
 
         @Override
         protected String[] doInBackground(String... params) {
@@ -136,7 +135,7 @@ public class ForecastFragment extends Fragment {
                         .appendQueryParameter(FORMAT_PARAM, format)
                         .appendQueryParameter(UNITS_PARAM, units)
                         .appendQueryParameter(DAYS_PARAM, Integer.toString(days))
-                        .appendQueryParameter(APPID_PARAM, APPID_VALUE)
+                        .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
                         .appendQueryParameter(LANG_PARAM, language).build();
 
                 URL url = new URL(uri.toString());
