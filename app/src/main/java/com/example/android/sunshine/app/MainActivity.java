@@ -17,6 +17,8 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(LOG_TAG, "ON CREATE");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
@@ -71,5 +73,33 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        Log.d(LOG_TAG, "ON PAUSE");
+        super.onPause();
+    }
 
+    @Override
+    protected void onStop() {
+        Log.d(LOG_TAG, "ON STOP");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(LOG_TAG, "ON DESTROY");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(LOG_TAG, "ON RESUME");
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(LOG_TAG, "ON START");
+        super.onStart();
+    }
 }
